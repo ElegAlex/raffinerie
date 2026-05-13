@@ -1,5 +1,6 @@
 const { invoke } = window.__TAURI__.core;
-const { open, save } = window.__TAURI__.dialog;
+// Les plugins (dialog) sont injectés plus tard que core — accès paresseux pour éviter TDZ.
+const dlg = () => window.__TAURI__.dialog;
 
 function app() {
   return {
@@ -102,6 +103,19 @@ function app() {
       this.$watch('notifKind', () => this.syncNotif());
       this.$watch('etapeIds', () => this.syncNotif(), { deep: true });
       this.$watch('statutValues', () => this.syncNotif(), { deep: true });
+
+      // Tauri 2 drag-drop : avec dragDropEnabled=true (config), les events HTML5
+      // ne fired pas — il faut écouter les events natifs Tauri.
+      try {
+        const { listen } = window.__TAURI__.event;
+        await listen('tauri://drag-drop', (e) => {
+          console.log('[raffinerie] drag-drop', e);
+          const paths = e && e.payload && e.payload.paths;
+          if (paths && paths.length) {
+            this.loadDump(paths[0]);
+          }
+        });
+      } catch (e) { console.error('drag-drop listen', e); }
     },
 
     get groupedColumns() {
@@ -141,7 +155,7 @@ function app() {
 
     async pickFile() {
       try {
-        const path = await open({ multiple: false, filters: [{ name: 'Dump SUCRE', extensions: ['dump', 'sql'] }] });
+        const path = await dlg().open({ multiple: false, filters: [{ name: 'Dump SUCRE', extensions: ['dump', 'sql'] }] });
         if (path) await this.loadDump(path);
       } catch (e) { alert('Erreur : ' + e); }
     },
@@ -224,7 +238,7 @@ function app() {
                   + String(now.getHours()).padStart(2, '0')
                   + String(now.getMinutes()).padStart(2, '0');
       try {
-        const path = await save({
+        const path = await dlg().save({
           defaultPath: `raffinerie_${ugePart}_${stamp}.xlsx`,
           filters: [{ name: 'Excel', extensions: ['xlsx'] }],
         });
