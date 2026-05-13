@@ -130,16 +130,23 @@
     <button @click="exportXlsx()" :disabled="estimatedCount === 0 || selectedColumns.length === 0" class="primary">💾 Exporter Excel</button>
   </section>
 
-  <div class="modal" x-show="previewOpen" @click.self="previewOpen = false">
+  <div class="modal" x-show="previewOpen" @click.self="previewOpen = false" @keydown.escape.window="previewOpen = false">
     <div class="modal-body">
-      <h3>Aperçu (100 premières lignes)</h3>
-      <table>
-        <thead><tr><template x-for="c in selectedColumns" :key="c"><th x-text="labelOf(c)"></th></template></tr></thead>
-        <tbody><template x-for="(r, ri) in previewRows" :key="ri">
-          <tr><template x-for="(cell, i) in r.cells" :key="i"><td x-text="cell"></td></template></tr>
-        </template></tbody>
-      </table>
-      <button @click="previewOpen = false">Fermer</button>
+      <div class="modal-header">
+        <h3>Aperçu (100 premières lignes)</h3>
+        <button class="modal-close" @click="previewOpen = false" aria-label="Fermer">✕</button>
+      </div>
+      <div class="modal-table-wrap">
+        <table>
+          <thead><tr><template x-for="c in selectedColumns" :key="c"><th x-text="labelOf(c)"></th></template></tr></thead>
+          <tbody><template x-for="(r, ri) in previewRows" :key="ri">
+            <tr><template x-for="(cell, i) in r.cells" :key="i"><td x-text="cell"></td></template></tr>
+          </template></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button @click="previewOpen = false">Fermer</button>
+      </div>
     </div>
   </div>
 

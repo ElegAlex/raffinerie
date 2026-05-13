@@ -52,7 +52,13 @@ input[type=text], input[type=date], select { background: var(--bg); color: var(-
 .actions { display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .estimate { font-size: 0.95em; }
 .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
-.modal-body { background: var(--bg); padding: 1.5rem; border-radius: 8px; max-width: 90vw; max-height: 85vh; overflow: auto; }
+.modal-body { background: var(--bg); border-radius: 8px; max-width: 90vw; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+.modal-header h3 { margin: 0; font-size: 1.1rem; }
+.modal-close { background: transparent; border: none; font-size: 1.4rem; line-height: 1; padding: 0.25rem 0.5rem; cursor: pointer; color: var(--muted); }
+.modal-close:hover { color: var(--fg); background: var(--chip-bg); }
+.modal-table-wrap { overflow: auto; padding: 0 1.5rem; flex: 1; min-height: 0; }
+.modal-footer { padding: 0.75rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
 table { border-collapse: collapse; width: 100%; font-size: 0.85em; }
 th, td { border: 1px solid var(--border); padding: 0.3rem 0.5rem; text-align: left; white-space: nowrap; }
 th { background: var(--chip-bg); position: sticky; top: 0; }
