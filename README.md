@@ -79,3 +79,18 @@ sudo dnf install -y webkit2gtk4.1-devel gtk3-devel librsvg2-devel \
 ```
 
 `cargo tauri dev` requiert un serveur X actif. Le build `.exe` final est produit par GitHub Actions (runner `windows-latest`).
+
+## Build status
+
+![Windows build](https://github.com/ElegAlex/raffinerie/actions/workflows/windows-build.yml/badge.svg)
+
+## Téléchargement
+
+Les builds Windows sont produits par GitHub Actions et publiés en tant qu'artefacts du workflow `Windows build`. Voir l'onglet [Actions](https://github.com/ElegAlex/raffinerie/actions).
+
+## Documentation
+
+- [Spec de design](docs/superpowers/specs/2026-05-13-raffinerie-design.md)
+- [Plan d'implémentation](docs/superpowers/plans/2026-05-13-raffinerie-implementation.md)
+- [Guide utilisateur](docs/guide-utilisateur.md)
+- [Changelog](CHANGELOG.md)
