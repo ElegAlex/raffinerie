@@ -28,10 +28,10 @@
   "bundle": {
     "active": true,
     "targets": ["nsis"],
-    "icon": ["icons/icon.png"],
+    "icon": ["icons/icon.png", "icons/icon.ico"],
     "windows": {
       "nsis": {
-        "installerIcon": "icons/icon.png",
+        "installerIcon": "icons/icon.ico",
         "installMode": "perMachine"
       }
     }
