@@ -443,7 +443,7 @@ Hors scope du livrable v1.0 mais à anticiper :
 
 | Point | À traiter |
 |---|---|
-| UGE cible CAMIEG : **9501** (Aurélie) ou **9531** (Corinne) ? | Confirmer avec Corinne avant la première extraction réelle. N'impacte pas l'outil (multi-UGE). |
+| UGE cible CAMIEG : **9501** (Aurélie) ou **9531** (Corinne) ? | **TRANCHÉ par analyse du dump (2026-05-13)** : UGE 9531 = "Pôle Camieg" dans le référentiel SUCRE. UGE 9501 n'existe pas. 523 indus ROC trouvés sur UGE 9531 (via `num_uge_detect`, le `num_uge_gestion` valant "0"). Le filtre raffinerie matche désormais sur gestion OR detect pour gérer ce cas. |
 | Profil « Standard CAMIEG » : colonnes exactes attendues ? | Soumettre la liste proposée à Corinne pour validation. |
 | Signature Authenticode | Demande à formuler à la DSI CPAM 92. |
 | Test WebView2 sur poste Corinne | À faire avant livraison v1.0. |

@@ -27,7 +27,13 @@ pub fn evaluate<'a>(dump: &'a ParsedDump, fs: &FilterSet) -> Vec<FilteredRow<'a>
     dump.creances
         .iter()
         .filter_map(|c| {
-            if !fs.uges.is_empty() && !fs.uges.contains(&c.num_uge_gestion) {
+            // Match UGE on either gestion or detection. Reason: dans SUCRE, les indus
+            // ROC ont num_uge_gestion="0" mais num_uge_detect porte la vraie UGE métier
+            // (ex. 9531 = Pôle Camieg). Filtrer uniquement sur gestion masquerait ces lignes.
+            if !fs.uges.is_empty()
+                && !fs.uges.contains(&c.num_uge_gestion)
+                && !fs.uges.contains(&c.num_uge_detect)
+            {
                 return None;
             }
             if !fs.nature_compte.is_empty() && !fs.nature_compte.contains(&c.nature_compte) {
@@ -205,6 +211,54 @@ mod tests {
             ..Default::default()
         };
         assert_eq!(evaluate(&d, &fs).len(), 0);
+    }
+
+    #[test]
+    fn uge_filter_matches_on_detect_field_too() {
+        // Reproduit le cas CAMIEG : num_uge_gestion="0", num_uge_detect="9531"
+        let mut d = ParsedDump::default();
+        d.creances.push(Creance {
+            id: 1,
+            workflow: None,
+            numero_creance: "C1".into(),
+            date_der_ope: None,
+            date_detect: None,
+            nature_compte: "IND".into(),
+            statut_compte: "N".into(),
+            gest_num: "G".into(),
+            numero_debiteur: "D".into(),
+            cat_debiteur: "C".into(),
+            num_uge_gestion: "0".into(),
+            montant_initial: 100.0,
+            solde: 100.0,
+            part_mutuel: None,
+            type_prest: None,
+            arc_det: None,
+            nature_der_ope: None,
+            matricule_assure: None,
+            date_mandatement: None,
+            activite: None,
+            num_compte: None,
+            nom_assure: None,
+            prenom_assure: None,
+            num_uge_detect: "9531".into(),
+            date_integration: None,
+            flux: None,
+            commentaire_creance: None,
+            iduge: None,
+            creanceregroupeeid: None,
+            num_technicien: None,
+            date_prescription: None,
+        });
+        let fs = FilterSet {
+            uges: vec!["9531".into()],
+            ..Default::default()
+        };
+        assert_eq!(
+            evaluate(&d, &fs).len(),
+            1,
+            "filter UGE 9531 should match num_uge_detect even when num_uge_gestion='0'"
+        );
     }
 
     #[test]

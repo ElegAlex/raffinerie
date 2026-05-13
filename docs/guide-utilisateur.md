@@ -10,7 +10,7 @@
 
 1. Glisser-déposer le fichier `sucre_939.dump` sur la fenêtre raffinerie. Le parsing prend ~2-5 secondes.
 2. Une fois le dump chargé, configurer les filtres :
-   - **UGE** : cocher `9501` (à confirmer avec Corinne)
+   - **UGE** : cocher `9531` (Pôle Camieg — validé par l'analyse du dump : 523 indus ROC sur cette UGE)
    - **Nature compte** : `IND`
    - **Commentaire contient** : `indu roc` (insensible casse/accents activé)
    - **Notification** : *Motif notif rempli*
@@ -18,7 +18,7 @@
    - **Période** : `01/01/2026` → date du jour
 3. Vérifier le compteur en bas (`Résultat estimé : … lignes`).
 4. Cliquer sur **Aperçu** pour visualiser les 100 premières lignes.
-5. Cliquer sur **Exporter Excel**. Choisir l'emplacement. Le fichier sera nommé `raffinerie_9501_<date>-<heure>.xlsx`.
+5. Cliquer sur **Exporter Excel**. Choisir l'emplacement. Le fichier sera nommé `raffinerie_9531_<date>-<heure>.xlsx`.
 
 ## 3. Composition du classeur Excel
 
