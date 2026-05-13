@@ -60,10 +60,12 @@ function app() {
         this.personalProfiles = (p && p.profiles) ? p.profiles : {};
       } catch (e) { console.error('load_profiles', e); }
 
+      let hasSession = false;
       try {
         const sess = await invoke('load_session');
         if (sess && sess.filters && Object.keys(sess.filters).length) {
           Object.assign(this.filters, sess.filters);
+          hasSession = true;
         }
         if (sess && Array.isArray(sess.columns) && sess.columns.length) {
           this.selectedColumns = sess.columns;
@@ -73,7 +75,22 @@ function app() {
         }
       } catch (e) { console.error('load_session', e); }
 
-      // If nothing loaded, default to Standard CAMIEG
+      // Premier lancement (pas de session) : pré-remplir le profil CAMIEG (spec §5.3)
+      if (!hasSession) {
+        this.filters.natureCompte = ['IND'];
+        this.filters.commentaireContient = 'indu roc';
+        this.filters.commentaireInsensible = true;
+        this.filters.notifCriterion = { kind: 'motif_notif_non_vide' };
+        this.notifKind = 'motif_notif_non_vide';
+        this.filters.datePivot = 'date_integration';
+        this.filters.dateMin = '2026-01-01';
+        const today = new Date();
+        this.filters.dateMax = today.getFullYear() + '-'
+          + String(today.getMonth() + 1).padStart(2, '0') + '-'
+          + String(today.getDate()).padStart(2, '0');
+      }
+
+      // If no columns loaded, default to Standard CAMIEG
       if (this.selectedColumns.length === 0 && this.presets['Standard CAMIEG']) {
         this.selectedColumns = [...this.presets['Standard CAMIEG']];
       }
