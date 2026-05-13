@@ -130,11 +130,11 @@
     <button @click="exportXlsx()" :disabled="estimatedCount === 0 || selectedColumns.length === 0" class="primary">💾 Exporter Excel</button>
   </section>
 
-  <div class="modal" x-show="previewOpen" @click.self="previewOpen = false" @keydown.escape.window="previewOpen = false">
+  <div class="modal" x-show="previewOpen" @click.self="closePreview()" @keydown.escape.window="closePreview()">
     <div class="modal-body">
       <div class="modal-header">
         <h3>Aperçu (100 premières lignes)</h3>
-        <button class="modal-close" @click="previewOpen = false" aria-label="Fermer">✕</button>
+        <button class="modal-close" type="button" @click.stop="closePreview()" aria-label="Fermer">✕</button>
       </div>
       <div class="modal-table-wrap">
         <table>
@@ -145,7 +145,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button @click="previewOpen = false">Fermer</button>
+        <button type="button" @click.stop="closePreview()">Fermer</button>
       </div>
     </div>
   </div>

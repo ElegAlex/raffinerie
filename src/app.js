@@ -209,6 +209,11 @@ function app() {
       } catch (e) { alert('Erreur aperçu : ' + e); }
     },
 
+    closePreview() {
+      console.log('[raffinerie] closePreview() called');
+      this.previewOpen = false;
+    },
+
     async exportXlsx() {
       const ugePart = this.filters.uges.length ? this.filters.uges.join('-') : 'toutesUGE';
       const now = new Date();
