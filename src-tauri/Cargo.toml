@@ -28,6 +28,7 @@ unicode-normalization = "0.1"
 thiserror = "1"
 sha2 = "0.10"
 once_cell = "1"
+dirs-next = "2"
 
 [dev-dependencies]
 calamine = "0.26"
