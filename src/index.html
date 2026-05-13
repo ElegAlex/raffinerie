@@ -2,12 +2,152 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>raffinerie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>raffinerie — extracteur SUCRE</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <h1>raffinerie</h1>
-  <p>UI en cours de développement.</p>
+<body x-data="app()" x-init="init()" :class="dark ? 'dark' : ''">
+  <header>
+    <h1>raffinerie <span class="version" x-text="version"></span></h1>
+    <div class="header-actions">
+      <button @click="dark = !dark" :title="dark ? 'Mode clair' : 'Mode sombre'">🌓</button>
+    </div>
+  </header>
+
+  <section class="dropzone" :class="{ loaded: dumpLoaded, loading: parsing }"
+           @dragover.prevent @drop.prevent="onDrop($event)">
+    <template x-if="!dumpLoaded && !parsing">
+      <div>
+        <p>📂 Glisser-déposer le fichier <code>.dump</code> ici</p>
+        <button @click="pickFile()">ou cliquer pour parcourir</button>
+      </div>
+    </template>
+    <template x-if="parsing">
+      <p>⏳ Parsing en cours…</p>
+    </template>
+    <template x-if="dumpLoaded">
+      <p>✓ <span x-text="dumpStats.creances.toLocaleString('fr-FR')"></span> créances chargées
+        en <span x-text="(dumpStats.elapsed_ms / 1000).toFixed(1)"></span> s
+        <button @click="resetDump()" class="link">changer de dump</button></p>
+    </template>
+  </section>
+
+  <section class="filters" x-show="dumpLoaded">
+    <h2>Filtres</h2>
+    <div class="filter-row">
+      <label>UGE</label>
+      <div class="multi-check">
+        <template x-for="u in uges" :key="u">
+          <label class="chip"><input type="checkbox" :value="u" x-model="filters.uges"> <span x-text="u"></span></label>
+        </template>
+      </div>
+    </div>
+    <div class="filter-row">
+      <label>Nature compte</label>
+      <div class="multi-check">
+        <template x-for="n in natures" :key="n">
+          <label class="chip"><input type="checkbox" :value="n" x-model="filters.natureCompte"> <span x-text="n"></span></label>
+        </template>
+      </div>
+    </div>
+    <div class="filter-row">
+      <label>Commentaire contient</label>
+      <input type="text" x-model.debounce.300ms="filters.commentaireContient" placeholder="ex: indu roc">
+      <label><input type="checkbox" x-model="filters.commentaireInsensible"> insensible casse/accents</label>
+    </div>
+    <div class="filter-row">
+      <label>Notification</label>
+      <select x-model="notifKind">
+        <option value="aucun">Aucun</option>
+        <option value="motif_notif_non_vide">Motif notif rempli</option>
+        <option value="date_ar_notif_non_vide">Date AR notif remplie</option>
+        <option value="etape_wf_dans">Étape WF parmi…</option>
+        <option value="statut_compte_dans">Statut compte parmi…</option>
+      </select>
+    </div>
+    <div class="filter-row" x-show="notifKind === 'etape_wf_dans'">
+      <label>Étapes WF</label>
+      <div class="multi-check">
+        <template x-for="e in etapes" :key="e[0]">
+          <label class="chip"><input type="checkbox" :value="e[0]" x-model.number="etapeIds"> <span x-text="e[0] + ' — ' + e[1]"></span></label>
+        </template>
+      </div>
+    </div>
+    <div class="filter-row" x-show="notifKind === 'statut_compte_dans'">
+      <label>Statuts compte</label>
+      <div class="multi-check">
+        <template x-for="s in statuts" :key="s">
+          <label class="chip"><input type="checkbox" :value="s" x-model="statutValues"> <span x-text="s"></span></label>
+        </template>
+      </div>
+    </div>
+    <div class="filter-row">
+      <label>Date pivot</label>
+      <select x-model="filters.datePivot">
+        <option value="date_detect">Date détection (créance)</option>
+        <option value="date_integration">Date intégration</option>
+        <option value="date_der_ope">Date dernière opération</option>
+        <option value="date_mandatement">Date mandatement</option>
+        <option value="date_ar_notif_debiteur">Date AR notification débiteur</option>
+        <option value="date_detection_regroupee">Date détection (regroupée)</option>
+      </select>
+    </div>
+    <div class="filter-row">
+      <label>Période</label>
+      du <input type="date" x-model="filters.dateMin">
+      au <input type="date" x-model="filters.dateMax">
+    </div>
+  </section>
+
+  <section class="columns" x-show="dumpLoaded">
+    <h2>Colonnes à exporter
+      <select x-model="activeProfile" @change="applyProfile()">
+        <option value="">— Profil —</option>
+        <template x-for="p in Object.keys(presets)" :key="p">
+          <option :value="p" x-text="p"></option>
+        </template>
+        <template x-for="p in Object.keys(personalProfiles)" :key="'_' + p">
+          <option :value="'_' + p" x-text="'★ ' + p"></option>
+        </template>
+      </select>
+      <button @click="savePersonalProfile()">Sauver profil…</button>
+    </h2>
+    <template x-for="group in groupedColumns" :key="group.name">
+      <details open>
+        <summary x-text="group.name + ' (' + group.cols.filter(c => selectedColumns.includes(c.id)).length + ' / ' + group.cols.length + ')'"></summary>
+        <div class="col-list">
+          <template x-for="c in group.cols" :key="c.id">
+            <label><input type="checkbox" :value="c.id" x-model="selectedColumns"> <span x-text="c.label"></span></label>
+          </template>
+        </div>
+      </details>
+    </template>
+  </section>
+
+  <section class="actions" x-show="dumpLoaded">
+    <div class="estimate">Résultat estimé : <strong x-text="estimatedCount.toLocaleString('fr-FR')"></strong> lignes</div>
+    <button @click="openPreview()" :disabled="estimatedCount === 0">👁 Aperçu</button>
+    <button @click="exportXlsx()" :disabled="estimatedCount === 0 || selectedColumns.length === 0" class="primary">💾 Exporter Excel</button>
+  </section>
+
+  <div class="modal" x-show="previewOpen" @click.self="previewOpen = false">
+    <div class="modal-body">
+      <h3>Aperçu (100 premières lignes)</h3>
+      <table>
+        <thead><tr><template x-for="c in selectedColumns" :key="c"><th x-text="labelOf(c)"></th></template></tr></thead>
+        <tbody><template x-for="(r, ri) in previewRows" :key="ri">
+          <tr><template x-for="(cell, i) in r.cells" :key="i"><td x-text="cell"></td></template></tr>
+        </template></tbody>
+      </table>
+      <button @click="previewOpen = false">Fermer</button>
+    </div>
+  </div>
+
+  <div class="toast" x-show="toast" x-transition>
+    <span x-text="toast"></span>
+  </div>
+
   <script src="app.js"></script>
+  <script src="vendor/alpine.min.js" defer></script>
 </body>
 </html>
