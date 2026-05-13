@@ -1,18 +1,18 @@
-pub mod parser;
-pub mod schema;
-pub mod filter;
 pub mod aggregator;
-pub mod exporter;
 pub mod catalog;
-pub mod state;
-pub mod persistence;
+pub mod exporter;
+pub mod filter;
 pub mod ipc;
+pub mod parser;
+pub mod persistence;
+pub mod schema;
+pub mod state;
 
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .manage(state::AppState::default())
+        .manage(state::AppState)
         .invoke_handler(tauri::generate_handler![
             ipc::parse_dump,
             ipc::list_uges,
