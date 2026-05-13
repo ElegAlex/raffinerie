@@ -33,8 +33,12 @@ pub enum NotifCriterion {
     Aucun,
     MotifNotifNonVide,
     DateArNotifNonVide,
-    EtapeWfDans { ids: Vec<i32> },
-    StatutCompteDans { values: Vec<String> },
+    EtapeWfDans {
+        ids: Vec<i32>,
+    },
+    StatutCompteDans {
+        values: Vec<String>,
+    },
 }
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
