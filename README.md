@@ -68,3 +68,14 @@ cargo tauri build
 ## Licence
 
 Usage interne CPAM / Assurance Maladie. Non publié sous licence open source pour l'instant.
+
+## Environnement de dev Linux
+
+Prérequis Fedora pour `cargo tauri dev` (déjà installés sur le poste cible) :
+```
+sudo dnf install -y webkit2gtk4.1-devel gtk3-devel librsvg2-devel \
+    libappindicator-gtk3-devel openssl-devel pkgconf-pkg-config \
+    javascriptcoregtk4.1-devel libsoup3-devel
+```
+
+`cargo tauri dev` requiert un serveur X actif. Le build `.exe` final est produit par GitHub Actions (runner `windows-latest`).
