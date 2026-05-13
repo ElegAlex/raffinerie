@@ -5,6 +5,7 @@ use chrono::NaiveDate;
 use std::collections::HashMap;
 use unicode_normalization::UnicodeNormalization;
 
+#[derive(Debug)]
 pub struct FilteredRow<'a> {
     pub creance: &'a Creance,
     pub regroupee: Option<&'a CreanceRegroupee>,
