@@ -1,0 +1,40 @@
+[package]
+name = "raffinerie"
+version = "0.1.0"
+edition = "2021"
+description = "Extracteur autonome de créances SUCRE depuis un dump pg_dump"
+authors = ["Alexandre Berge"]
+
+[lib]
+name = "raffinerie"
+path = "src/lib.rs"
+
+[[bin]]
+name = "raffinerie"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }
+rust_xlsxwriter = { version = "0.79", features = ["chrono"] }
+unicode-normalization = "0.1"
+thiserror = "1"
+sha2 = "0.10"
+once_cell = "1"
+
+[dev-dependencies]
+calamine = "0.26"
+tempfile = "3"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+opt-level = "z"
