@@ -1,0 +1,39 @@
+# Rust / Cargo
+/target/
+**/target/
+Cargo.lock.bak
+*.pdb
+
+# Tauri
+/src-tauri/target/
+/src-tauri/gen/
+/src-tauri/WixTools/
+
+# Node (frontend tooling éventuel)
+node_modules/
+dist/
+.parcel-cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Données métier — JAMAIS commiter de dump
+*.dump
+*.dmp
+*.sql.gz
+
+# Sorties d'export
+*.xlsx
+!tests/fixtures/**/*.xlsx
+
+# Logs
+logs/
+*.log
